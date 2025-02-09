@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="container-fluid">
+        <div class="row py-4 bg-info-subtle">
+            <h1 class="text-center py-3">Train Search Results</h1>
+            <div class="d-flex justify-content-around align-items-center">
+                <div class="col-6" >
+                    <form class="ms-5" method="GET" action="{% url 'seatplan' %}">
+                        {% csrf_token %}
+                        <div class="mb-3 w-50 ">
+                            <label for="selectTrain" class="form-label">Select Train</label>
+                            {% if trains %}
+                            <select class="form-select" name="selectTrain">
+                                <option selected>Choose...</option>
+                                
+                                {% for train in trains  %}
+                                <option >{{train.Train_name.train_name}}</option>
+                                {% endfor %}
+                                    
+                            </select>
+                            <input type="hidden" name="date" value="{{ date }}">
+                            <button type="submit" class="btn btn-primary mt-3">Available Seat</button>
+                            {% else %}
+                                <h5>NO Train Available</h5>
+                            {% endif %}
+                        </div>
+                        
+                    </form>
+        
+        
+            
+   
+                </div>
+
+                <div class="col-6 "> 
+                    <table class="table table-striped py-3 shadow rounded-lg">
+                        <thead>
+                            <tr>
+
+                                <th scope="col">Train Name</th>
+                                <th scope="col">Departure Station</th>
+                                <th scope="col">Start Time</th>
+                                <th scope="col">Destination Station</th>
+                                <th scope="col">Arrival Time</th>
+                                
+                            </tr>
+                        </thead>
+                
+                        <tbody>        
+                        {% if schedules%}
+                    
+                        {% for schedule in schedules  %}
+                        <tr>
+                            <td>{{schedule.train}}</td>
+                            <td>{{schedule.start_station}}</td>
+                            <td>{{schedule.start_time}}</td>
+                            <td>{{schedule.end_station}}</td>
+                            <td>{{schedule.arrival_time}}</td>
+                            
+                        </tr>
+                     {% endfor %}  
+                     {% else %}
+                     <tr>
+                        <td class="text-danger">No Train Available</td>
+                     </tr>    
+                 {% endif %}   
+                </tbody>   
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+          
+        </div>
+      </div>
+
+
+
+{% endblock content %}
+

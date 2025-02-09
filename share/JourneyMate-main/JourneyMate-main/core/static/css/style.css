@@ -1,0 +1,32 @@
+.seat-plan {
+    margin: 20px;
+}
+
+.seat-row {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.seat {
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+    text-align: center;
+    line-height: 50px;
+    box-shadow: 3px 3px 5px grey;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.seat.booked {
+    background-color: #f44336; /* Red for booked seats */
+    color: white;
+    cursor: not-allowed;
+}
+
+.seat.selected {
+    background-color: #4caf50; /* Green for selected seats */
+    color: white;
+    font-weight: bold;
+}

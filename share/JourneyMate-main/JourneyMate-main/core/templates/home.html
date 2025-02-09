@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row py-4 bg-primary-subtle">
+        <div class="d-flex justify-content-around align-items-center">
+            <div col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 ps-4 pt-lg-5 pt-xl-5 pt-md-4 >
+                <form class="form shadow rounded p-5 bg-primary-subtle",method="GET" action="{% url 'search_train' %}">
+                    {% csrf_token %}	
+                        <label for="departure" class="form-label">Departure</label>
+                        <input type="text" class="form-control" name="departure" placeholder="Enter departure station">
+                        <label for="destination" class="form-label">Destination</label>
+                        <input type="text" class="form-control" name="destination" placeholder="Enter destination station">
+                        <label for="date" class="form-label">Date</label>
+                        <input type="date" class="form-control" name="date">
+                        <button type="submit" class="btn btn-primary mt-3">Search Train</button>		
+                </form>
+            </div>
+
+            <div col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12> 
+                <img src="{% static 'railway banner.png' %}" alt="" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+      
+    </div>
+  </div>
+{% endblock content %}
+    
