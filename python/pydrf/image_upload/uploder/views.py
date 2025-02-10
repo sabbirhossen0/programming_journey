@@ -40,3 +40,18 @@ def product_detail_view(request, pk):
     if request.method == 'DELETE':
         image.delete()
         return Response({"message": "Image deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+
+
+@api_view(['GET'])
+def search_products_view(request):
+    search_query = request.GET.get('search', '')
+
+    if search_query:
+        products = product.objects.filter(title__icontains=search_query)  # Assuming 'name' is a field in your model
+        if products.exists():
+            serializer = UploadedImageSerializer(products, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({"message": "No products found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    return Response({"error": "Search query parameter is required"}, status=status.HTTP_400_BAD_REQUEST)

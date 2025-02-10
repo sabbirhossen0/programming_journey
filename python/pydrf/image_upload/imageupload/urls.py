@@ -34,6 +34,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('product/', views.product_list_create_view, name='image-create-view'),
     path('productshow/<int:pk>', views.product_detail_view, name='image-create-view'),
+    path('searching/', views.search_products_view, name='product-search'),
 ]
 
 # Add media URL configuration
