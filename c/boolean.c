@@ -7,7 +7,5 @@
     // Return boolean values
     printf("%d\n", isProgrammingFun);   // Returns 1 (true)
     printf("%d", isFishTasty); 
-
-
-
+    
  }
