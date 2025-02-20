@@ -1,23 +1,29 @@
 #include <stdio.h>
 int main (){
+
+    // Write a program to check if a number is positive, negative, or zero.
     int number;
-    float fnumber;
-    
-    
-    printf("\nEnter a integer number :");
+    printf("\nEnter a integer number :");  //leveling
     scanf("%d",&number);
 
-    printf("\n Enter a floating number :");
-    scanf("%f",&fnumber);
-    
-    printf("\nhere integer number :%d",number); 
-	printf("\n here  floating number : %f",fnumber);
-	   
-	
-	   
-	   return 0;
-	printf("here not executable ");   
-	   
-	   
-	   
+//     if(number>0){//
+//         printf("%d is positive number",number);
+//     }
+//     else if(number<0){
+// printf("%d is a nagetive number ",number);
+//     }
+//     else{
+//         printf("%d is a Zero",number);
+//     }
+  
+if(number>0){//
+    printf("%d is positive number",number);
+}
+if(number<0){
+printf("%d is a nagetive number ",number);
+}
+if (number ==0)
+{
+    printf("%d is a Zero",number);
+}	   
 }
