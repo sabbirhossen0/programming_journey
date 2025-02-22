@@ -22,6 +22,9 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'channels',
 
+  # other apps
+    'corsheaders',
+
     'chat',
     'friends',
     'users'
@@ -35,6 +38,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+        # other middleware
+    'corsheaders.middleware.CorsMiddleware',  # Add this line
+    'django.middleware.common.CommonMiddleware',  # Keep this line
 ]
 
 ROOT_URLCONF = 'chat_app.urls'
