@@ -44,6 +44,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'chat_app.urls'
+CORS_ALLOW_ALL_ORIGINS = True
 
 TEMPLATES = [
     {
