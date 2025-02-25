@@ -87,10 +87,8 @@ CORS_ALLOW_HEADERS = [
 ]
 
 
-
-
-
 ROOT_URLCONF = 'authproject.urls'
+
 
 TEMPLATES = [
     {
@@ -107,6 +105,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'authproject.wsgi.application'
 
