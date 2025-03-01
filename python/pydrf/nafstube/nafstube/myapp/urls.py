@@ -6,3 +6,4 @@ urlpatterns = [
     path('<int:pk>/', VideoDetailView.as_view(), name='video-detail'),  # Video details
     path('subscribe/', SubscriptionView.as_view(), name='subscribe'),  # Subscribe to a channel
 ]
+
