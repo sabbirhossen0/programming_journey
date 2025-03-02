@@ -25,12 +25,13 @@ SECRET_KEY = 'django-insecure-%ei8ss)96=i^(z9-4v98*b(!s^%s7y8u)y@8h$@3*_p17y=phx
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.0.104','127.0.0.1']
+ALLOWED_HOSTS = ['192.168.0.111','127.0.0.1']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'uploder',
     'rest_framework',
-
     'corsheaders'
 
 ]
@@ -61,8 +61,8 @@ MIDDLEWARE = [
 
 #for web
 CORS_ALLOWED_ORIGINS = [
-    "http://192.168.0.104:8000",  # Adjust based on where your Flutter app is served
-    "http://192.168.0.104",  # IP of your web app
+    "http://192.168.0.111:8001",  # Adjust based on where your Flutter app is served
+    "http://192.168.0.111",  # IP of your web app
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
