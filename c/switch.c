@@ -19,12 +19,7 @@ case 4:
  printf("april");
 break;
 
-
 }
-
 printf("\nour code end hare ");
-
-
-
 
 }
