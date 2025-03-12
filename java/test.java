@@ -2,6 +2,9 @@
 
 public class test {
     public static void main(String[] args){
-        System.out.println("hello sabbir hossen ");
+
+String a="1020";
+
+        System.out.println("hello sabbir hossen "+a);
     }
 }
