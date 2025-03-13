@@ -36,7 +36,6 @@ public class basic{
 
     public static void main(String[] args){
         System.out.println("hello this is sabbir hossen ");
-   
         animal a=new animal();
         bird b=new bird();
         eagle e=new eagle();
@@ -47,7 +46,6 @@ a.eat();
 b.eat();
 e.eat();
 
-   
     }
 
 
