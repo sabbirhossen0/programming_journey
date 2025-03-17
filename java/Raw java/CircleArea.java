@@ -20,15 +20,11 @@ public class CircleArea {
     public static void main(String[] args) {
 
         Circle c1 = new Circle();
-
         Scanner sc = new Scanner(System.in);
-
         System.out.print("Enter radius R0 (inner circle): ");
         float r0 = sc.nextFloat();
-
         System.out.print("Enter radius R1 (outer circle): ");
         float r1 = sc.nextFloat();
-
         if (r1 > r0) {
             c1.setRadius(r0, r1);
             c1.printArea();
