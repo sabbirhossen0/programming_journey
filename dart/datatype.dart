@@ -25,8 +25,6 @@ void main() {
   Null noValue = null;
 
   // Enum
-  enum Status { active, inactive, pending }
-  var userStatus = Status.active;
 
   // Function type
   Function greet = () => print('Hello from a function!');
@@ -41,7 +39,6 @@ void main() {
   print('Dynamic: $anything');
   print('Object: $something');
   print('Null: $noValue');
-  print('Status: $userStatus');
   
   greet(); // Calling function
 }
