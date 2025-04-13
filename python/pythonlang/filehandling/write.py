@@ -1,6 +1,6 @@
-with open("pyhtona.txt", "w") as f:
-    f.write("Hello, world!\n")
+with open("file.txt", "w") as f:
+    f.write("this is file !\n")
     f.write("Second line.")
 
-r=open("pythona.txt", "r")
-print(r)   
+n = open("file.txt", "r")
+print(n.read())   
