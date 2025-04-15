@@ -4,3 +4,5 @@ with open("file.txt", "w") as f:
 
 n = open("file.txt", "r")
 print(n.read())   
+
+
