@@ -10,7 +10,7 @@ class BlogPost(models.Model):
         ('published', 'Published'),
     ]
 
-    title = models.CharField(max_length=255)
+    # title = models.CharField(max_length=255)
     description = models.TextField()
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     state = models.CharField(max_length=10, choices=STATE_CHOICES, default='draft')
