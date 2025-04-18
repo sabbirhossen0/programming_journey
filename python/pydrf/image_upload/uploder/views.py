@@ -45,6 +45,8 @@ def product_detail_view(request, pk):
 
 @api_view(['GET'])
 def search_products_view(request):
+
+    
     search_query = request.GET.get('search', '')
 
     if search_query:
