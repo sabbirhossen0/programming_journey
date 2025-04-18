@@ -2,7 +2,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.core.mail import send_mail
-from .models import Contact
+from .models import contact
 from .serializers import ContactSerializer
 
 @api_view(['POST'])
