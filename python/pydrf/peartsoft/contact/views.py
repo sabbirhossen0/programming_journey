@@ -21,8 +21,8 @@ def contact_us(request):
         send_mail(
             subject,
             message,
-            'your_email@gmail.com',  # Change to your Gmail
-            ['sabbir@gmail.com'],    # Your email where the message goes
+            'wonderfully701@gmail.com',  # Change to your Gmail
+            ['sabbirnubcse@gmail.com'],    # Your email where the message goes
         )
 
         return Response({"status": "Message sent and saved successfully"})
