@@ -58,7 +58,7 @@ MIDDLEWARE = [
 #for web
 CORS_ALLOWED_ORIGINS = [
     # "http://192.168.0.104:8000",  # Adjust based on where your Flutter app is served
-    "http://127.0.0.1",  # IP of your web app
+    "127.0.0.1",  # IP of your web app
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
