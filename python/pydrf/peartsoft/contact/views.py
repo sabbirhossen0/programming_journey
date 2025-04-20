@@ -1,7 +1,6 @@
-# contact_app/views.py
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.core.mail import send_mail
+from django.core.mail import send_mail, BadHeaderError
 from .models import contact
 from .serializers import ContactSerializer
 
@@ -11,19 +10,30 @@ def contact_us(request):
     if serializer.is_valid():
         serializer.save()
 
-        # Send email to you
-        subject = "New Contact Form Submission"
-        message = f"""
-        Name: {request.data.get('first_name')} {request.data.get('last_name')}
-        Email: {request.data.get('email')}
-        Message: {request.data.get('message')}
-        """
-        send_mail(
-            subject,
-            message,
-            'wonderfully701@gmail.com',  # Change to your Gmail
-            ['sabbirnubcse@gmail.com'],    # Your email where the message goes
-        )
+        first_name = serializer.validated_data.get('first_name')
+        last_name = serializer.validated_data.get('last_name')
+        email = serializer.validated_data.get('email')
+        message = serializer.validated_data.get('message')
 
-        return Response({"status": "Message sent and saved successfully"})
-    return Response(serializer.errors)
+        subject = "New Contact Form Submission"
+        body = f"""
+        Name: {first_name} {last_name}
+        Email: {email}
+        Message: {message}
+        """
+
+        try:
+            send_mail(
+                subject,
+                body,
+                'wonderfully701@gmail.com',  # Your Gmail (must be configured)
+                ['sabbirnubcse@gmail.com'],   # Recipient
+                fail_silently=False,
+            )
+            return Response({"status": "Message sent and saved successfully"})
+        except BadHeaderError:
+            return Response({"error": "Invalid header found."}, status=400)
+        except Exception as e:
+            return Response({"error": f"Failed to send email: {str(e)}"}, status=500)
+
+    return Response(serializer.errors, status=400)
