@@ -27,7 +27,7 @@ def contact_us(request):
                 subject,
                 body,
                 'wonderfully701@gmail.com',  # Your Gmail (must be configured)
-                ['sabbirnubcse@gmail.com'],   # Recipient
+                ['sabbir472003@gmail.com'],   # Recipient
                 fail_silently=False,
             )
             return Response({"status": "Message sent and saved successfully"})
