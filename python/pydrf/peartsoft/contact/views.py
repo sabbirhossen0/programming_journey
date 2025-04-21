@@ -30,6 +30,18 @@ def contact_us(request):
                 ['sabbir472003@gmail.com'],   # Recipient
                 fail_silently=False,
             )
+
+            send_mail(
+                "PearT Soft - Thanks for Contacting Us!",
+                "Hi there,\n\nThanks for contacting us. We'll get back to you shortly.\n\nBest,\nPearT Soft Team",
+                'wonderfully701@gmail.com',  # Your Gmail (must be configured)
+                [email],   # Recipient
+                fail_silently=False,
+            )
+
+
+
+
             return Response({"status": "Message sent and saved successfully"})
         except BadHeaderError:
             return Response({"error": "Invalid header found."}, status=400)
