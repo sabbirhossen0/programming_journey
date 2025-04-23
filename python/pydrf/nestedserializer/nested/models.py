@@ -10,4 +10,10 @@ class book(models.Model):
     def __str__(self):
         return self.name
 
-c
+class author (models.Model):
+    name=models.CharField(max_length=100)
+    age=models.IntegerField()
+    books=models.ManyToManyField(book)
+    
+    def __str__(self):
+        return super().__str__()
