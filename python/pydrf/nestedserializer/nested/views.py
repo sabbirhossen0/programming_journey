@@ -15,3 +15,10 @@ def books(request):
     b=book.objects.all()
     serializer=bookSerializer(b,many=True)
     return Response(serializer.data,status=200)
+
+
+@api_view(['GET'])
+def authorview(request):
+    b=author.objects.all()
+    serializer=authorSerializer(b,many=True)
+    return Response(serializer.data,status=200)
