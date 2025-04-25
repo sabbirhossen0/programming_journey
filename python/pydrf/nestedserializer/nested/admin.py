@@ -3,4 +3,4 @@ from .models import book, author
 
 # Register your models here.
 admin.site.register(book)
-admin.models.register(author)
+admin.site.register(author)
