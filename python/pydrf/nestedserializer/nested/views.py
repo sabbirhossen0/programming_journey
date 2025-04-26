@@ -3,6 +3,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import book, author
 from .serializers import bookSerializer,authorSerializer
+
+from  django.db.models import Q
 # Create your views here.
 
 @api_view(['GET'])
@@ -41,10 +43,13 @@ def authorcreate(request):
         return Response(serializer.data,status=201)
     return Response(serializer.errors,status=400)
 
+
+#search based on search query
+
 @api_view(['GET'])
 def booksearch(request):
     query=request.GET.get('q','')
-    b=book.objects.filter(name__icontains=query)
+    b=book.objects.filter(Q(name__icontains=query) | Q(name__startswith=query)|Q(name__iexact=query) )
     serializer=bookSerializer(b,many=True)
     return Response(serializer.data)
 
