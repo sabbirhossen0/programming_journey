@@ -1,9 +1,11 @@
 from django.urls import path 
-from .views import home,books,authorview
+from .views import home,books,authorview,bookcreate,authorcreate
 
 urlpatterns=[
     path('home/',home),
     path('books/',books),
-    path('author/',authorview)
+    path('author/',authorview),
+    path('addbook/',bookcreate),
+    path('addauthor/',authorcreate)
 
 ]
