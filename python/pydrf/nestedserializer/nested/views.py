@@ -40,3 +40,11 @@ def authorcreate(request):
         serializer.save()
         return Response(serializer.data,status=201)
     return Response(serializer.errors,status=400)
+
+@api_view(['GET'])
+def booksearch(request):
+    query=request.GET.get('q','')
+    b=book.objects.filter(name__icontains=query)
+    serializer=bookSerializer(b,many=True)
+    return Response(serializer.data)
+
