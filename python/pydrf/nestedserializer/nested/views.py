@@ -55,6 +55,7 @@ def booksearch(request):
 
 
 
+# id based search 
 @api_view(['GET'])
 def bookdetails(request,pk):
     b=book.objects.get(id=pk)
