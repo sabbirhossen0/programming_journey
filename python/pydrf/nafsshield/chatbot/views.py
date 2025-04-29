@@ -1,9 +1,9 @@
-import openai
+from openai import OpenAI
 from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-openai.api_key = settings.OPENAI_API_KEY
+client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
 @api_view(['POST'])
 def chat_with_bot(request):
@@ -15,14 +15,14 @@ You are a caring Islamic assistant. Respond with a short, motivational Surah Aya
 """
 
     try:
-        chat_response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are an Islamic chatbot that provides motivational Quranic Ayat."},
                 {"role": "user", "content": prompt}
             ]
         )
-        reply = chat_response.choices[0].message['content']
+        reply = response.choices[0].message.content
         return Response({"reply": reply})
     except Exception as e:
         return Response({"error": str(e)}, status=500)
