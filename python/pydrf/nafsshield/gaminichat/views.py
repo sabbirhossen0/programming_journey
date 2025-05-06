@@ -23,7 +23,7 @@ def chat_with_gamini(request):
     # Customize prompt for motivational ayah
     prompt = (
         f"The user is feeling sad and shares: '{user_message}'. "
-        "Please reply with a motivational and comforting Surah or Ayah from the Quran with arabic and  a simple explanation in  English."
+        "Please reply with a motivational and comforting Surah or Ayah from the Quran with arabic and  a simple explanation in  Bangla language."
     )
 
     try:

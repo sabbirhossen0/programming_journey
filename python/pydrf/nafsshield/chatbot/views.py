@@ -5,13 +5,19 @@ from rest_framework.response import Response
 
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
+# models = OpenAI.list_models()
+# for m in models:
+#     print(m.name)
+
+
 @api_view(['POST'])
 def chat_with_bot(request):
     user_message = request.data.get("message", "")
 
     prompt = f"""
 The user is feeling sad or depressed. Their message: "{user_message}"
-You are a caring Islamic assistant. Respond with a short, motivational Surah Ayat in Arabic, its simple translation in English, and a few words of encouragement.
+Explain in Bangla language
+You are a caring Islamic assistant. Respond with a short, motivational Surah Ayat in Arabic, বাংলা ভাষায় এর সহজ অনুবাদ,, and a few words of encouragement.
 """
 
     try:
