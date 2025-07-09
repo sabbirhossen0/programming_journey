@@ -10,7 +10,6 @@ class Teacher:
 class student(Teacher):
       pass
 
-
 teacher1 = Teacher()  # Create an instance of the class
 teacher1.display()  # Call the method correctly
 
