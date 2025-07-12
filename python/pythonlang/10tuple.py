@@ -24,7 +24,7 @@ agelist = tuple(temp_list)
 print(agelist)  # Output: (10, 20, 30, 40, 50, 60, 13)
 
 # Add item using insert (convert to list first)
-temp_list.insert(1, 80)  # Index number, value
+temp_list.insert(1, 80)  # Index number, value   
 agelist = tuple(temp_list)
 print(agelist)  # Output: (10, 80, 20, 30, 40, 50, 60, 13)
 

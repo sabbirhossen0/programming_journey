@@ -1,6 +1,4 @@
-print('hello world')
-print('hello world')
-print('hello world')
-print('hello sabbir how are you')
-username = input("Enter username:")
-print("Username is: " + username)
+p="peartsoft"
+
+print(p[5:])
+
