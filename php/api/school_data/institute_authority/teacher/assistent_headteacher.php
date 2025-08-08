@@ -74,12 +74,12 @@ if ($method === 'POST') {
     if ($id) {
         // Delete image file if exists
         $res = $conn->query("SELECT image FROM assistant_head_teacher WHERE id = $id");
-        if ($res->num_rows > 0) {
+       if ($res->num_rows > 0) {
             $imgRow = $res->fetch_assoc();
-            if (!empty($imgRow['image']) && file_exists($imgRow['image'])) {
-                unlink($imgRow['image']);
-            }
+            $imgPath = "assheadteacher/" . $imgRow['image'];
+            if (file_exists($imgPath)) unlink($imgPath);
         }
+
 
         $stmt = $conn->prepare("DELETE FROM assistant_head_teacher WHERE id = ?");
         $stmt->bind_param("i", $id);
