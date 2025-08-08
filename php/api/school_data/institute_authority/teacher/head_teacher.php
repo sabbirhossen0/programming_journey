@@ -76,7 +76,7 @@ if ($method === "POST") {
         $res = $conn->query("SELECT image FROM head_teacher WHERE id=$id");
         if ($res->num_rows > 0) {
             $imgRow = $res->fetch_assoc();
-            $imgPath = "uploads/" . $imgRow['image'];
+            $imgPath = "headteacher/" . $imgRow['image'];
             if (file_exists($imgPath)) unlink($imgPath);
         }
 
