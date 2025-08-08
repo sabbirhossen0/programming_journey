@@ -1,7 +1,7 @@
 <?php
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, DELETE");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 $servername = "localhost";
@@ -28,6 +28,24 @@ $conn->query($createTableSQL);
 
 $method = $_SERVER['REQUEST_METHOD'];
 
+function uploadImage($file, $oldFile = null) {
+    $targetDir = "uploads/class_activity/";
+    if (!file_exists($targetDir)) {
+        mkdir($targetDir, 0777, true);
+    }
+    $fileName = time() . "_" . basename($file['name']);
+    $targetFile = $targetDir . $fileName;
+
+    if (move_uploaded_file($file['tmp_name'], $targetFile)) {
+        if ($oldFile) {
+            $oldPath = $targetDir . $oldFile;
+            if (file_exists($oldPath)) unlink($oldPath);
+        }
+        return $fileName;
+    }
+    return false;
+}
+
 if ($method === 'POST') {
     $title       = $_POST['title'] ?? '';
     $description = $_POST['description'] ?? '';
@@ -40,29 +58,17 @@ if ($method === 'POST') {
         exit;
     }
 
-    // Handle image upload
-    $imagePath = '';
-    $targetDir = "uploads/class_activity/";
-    if (!file_exists($targetDir)) {
-        mkdir($targetDir, 0777, true);
-    }
-
-    $imageName = time() . "_" . basename($_FILES['image']['name']);
-    $targetFile = $targetDir . $imageName;
-
-    if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
-        $imagePath = $imageName;  // store just filename, folder known
-    } else {
+    $imageName = uploadImage($_FILES['image']);
+    if (!$imageName) {
         echo json_encode(["status" => "error", "message" => "Image upload failed"]);
         exit;
     }
 
-    // Insert record
     $stmt = $conn->prepare("INSERT INTO class_activity (image, title, description, activity_date, dept) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssss", $imagePath, $title, $description, $activity_date, $dept);
+    $stmt->bind_param("sssss", $imageName, $title, $description, $activity_date, $dept);
 
     if ($stmt->execute()) {
-        echo json_encode(["status" => "success", "message" => "Class activity added successfully"]);
+        echo json_encode(["status" => "success", "message" => "Class activity added successfully", "id" => $stmt->insert_id]);
     } else {
         echo json_encode(["status" => "error", "message" => $conn->error]);
     }
@@ -76,6 +82,45 @@ if ($method === 'POST') {
         $activities[] = $row;
     }
     echo json_encode($activities);
+
+} elseif ($method === 'PUT') {
+    // PUT data is not in $_POST or $_FILES, parse input and handle image upload separately
+    parse_str(file_get_contents("php://input"), $putData);
+
+    $id = $putData['id'] ?? null;
+    $title = $putData['title'] ?? null;
+    $description = $putData['description'] ?? null;
+    $activity_date = $putData['date'] ?? null;
+    $dept = $putData['dept'] ?? null;
+
+    if (!$id || !$title || !$description || !$activity_date || !$dept) {
+        http_response_code(400);
+        echo json_encode(["status" => "error", "message" => "ID, title, description, date, and dept are required"]);
+        exit;
+    }
+
+    // Get existing image filename
+    $res = $conn->query("SELECT image FROM class_activity WHERE id = $id");
+    if (!$res || $res->num_rows === 0) {
+        http_response_code(404);
+        echo json_encode(["status" => "error", "message" => "Record not found"]);
+        exit;
+    }
+    $row = $res->fetch_assoc();
+    $oldImage = $row['image'];
+
+    // PHP doesn't support file uploads with PUT, so to update image you must use POST + _method=PUT or separate endpoint
+    // For now, we update only text fields and keep old image
+    $stmt = $conn->prepare("UPDATE class_activity SET title = ?, description = ?, activity_date = ?, dept = ? WHERE id = ?");
+    $stmt->bind_param("ssssi", $title, $description, $activity_date, $dept, $id);
+
+    if ($stmt->execute()) {
+        echo json_encode(["status" => "success", "message" => "Class activity updated"]);
+    } else {
+        http_response_code(500);
+        echo json_encode(["status" => "error", "message" => $conn->error]);
+    }
+    $stmt->close();
 
 } elseif ($method === 'DELETE') {
     parse_str(file_get_contents("php://input"), $deleteData);
@@ -95,7 +140,9 @@ if ($method === 'POST') {
     } else {
         echo json_encode(["status" => "error", "message" => "ID is required"]);
     }
+} else {
+    http_response_code(405);
+    echo json_encode(["status" => "error", "message" => "Method not allowed"]);
 }
 
 $conn->close();
-?>

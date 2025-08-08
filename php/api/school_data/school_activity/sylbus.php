@@ -1,7 +1,7 @@
 <?php
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, DELETE");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 $servername = "localhost";
@@ -26,6 +26,30 @@ CREATE TABLE IF NOT EXISTS syllabus (
 )";
 $conn->query($createTableSQL);
 
+function uploadPDF($file, $oldFile = null) {
+    $targetDir = "uploads/syllabus/";
+    if (!file_exists($targetDir)) {
+        mkdir($targetDir, 0777, true);
+    }
+    $fileName = time() . "_" . basename($file['name']);
+    $targetFile = $targetDir . $fileName;
+
+    $fileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+    if ($fileType !== "pdf") {
+        return false;
+    }
+
+    if (move_uploaded_file($file['tmp_name'], $targetFile)) {
+        // Delete old file if exists
+        if ($oldFile) {
+            $oldPath = $targetDir . $oldFile;
+            if (file_exists($oldPath)) unlink($oldPath);
+        }
+        return $fileName;
+    }
+    return false;
+}
+
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'POST') {
@@ -33,54 +57,42 @@ if ($method === 'POST') {
     $class = $_POST['class'] ?? '';
     $title = $_POST['title'] ?? '';
 
-    // Validate required fields
     if (!$publication_date || !$class || !$title) {
+        http_response_code(400);
         echo json_encode(["status" => "error", "message" => "Missing required fields"]);
         exit;
     }
 
-    // Validate class is integer
     if (!filter_var($class, FILTER_VALIDATE_INT)) {
+        http_response_code(400);
         echo json_encode(["status" => "error", "message" => "Class must be an integer"]);
         exit;
     }
 
-    // Handle optional PDF upload
     $pdfFileName = null;
     if (isset($_FILES['pdf_file']) && $_FILES['pdf_file']['error'] === UPLOAD_ERR_OK) {
-        $targetDir = "uploads/syllabus/";
-        if (!file_exists($targetDir)) {
-            mkdir($targetDir, 0777, true);
-        }
-
-        $originalName = basename($_FILES['pdf_file']['name']);
-        $pdfFileName = time() . "_" . $originalName;
-        $targetFile = $targetDir . $pdfFileName;
-
-        $fileType = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
-        if ($fileType !== "pdf") {
-            echo json_encode(["status" => "error", "message" => "Only PDF files are allowed"]);
+        $uploadResult = uploadPDF($_FILES['pdf_file']);
+        if ($uploadResult === false) {
+            http_response_code(400);
+            echo json_encode(["status" => "error", "message" => "Only PDF files are allowed or upload failed"]);
             exit;
         }
-
-        if (!move_uploaded_file($_FILES['pdf_file']['tmp_name'], $targetFile)) {
-            echo json_encode(["status" => "error", "message" => "PDF upload failed"]);
-            exit;
-        }
+        $pdfFileName = $uploadResult;
     }
 
     $stmt = $conn->prepare("INSERT INTO syllabus (publication_date, class, title, pdf_file) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("siss", $publication_date, $class, $title, $pdfFileName);
 
     if ($stmt->execute()) {
-        echo json_encode(["status" => "success", "message" => "Syllabus added successfully"]);
+        http_response_code(201);
+        echo json_encode(["status" => "success", "message" => "Syllabus added successfully", "id" => $stmt->insert_id]);
     } else {
+        http_response_code(500);
         echo json_encode(["status" => "error", "message" => $conn->error]);
     }
     $stmt->close();
 
 } elseif ($method === 'GET') {
-    // Order by class ascending only
     $result = $conn->query("SELECT * FROM syllabus ORDER BY class ASC");
     $syllabi = [];
     while ($row = $result->fetch_assoc()) {
@@ -88,27 +100,82 @@ if ($method === 'POST') {
     }
     echo json_encode($syllabi);
 
+} elseif ($method === 'PUT') {
+    parse_str(file_get_contents("php://input"), $putData);
+
+    $id = $putData['id'] ?? null;
+    $publication_date = $putData['publication_date'] ?? null;
+    $class = $putData['class'] ?? null;
+    $title = $putData['title'] ?? null;
+
+    if (!$id || !$publication_date || !$class || !$title) {
+        http_response_code(400);
+        echo json_encode(["status" => "error", "message" => "ID, publication_date, class and title are required"]);
+        exit;
+    }
+
+    if (!filter_var($class, FILTER_VALIDATE_INT)) {
+        http_response_code(400);
+        echo json_encode(["status" => "error", "message" => "Class must be an integer"]);
+        exit;
+    }
+
+    // Get existing pdf filename
+    $res = $conn->query("SELECT pdf_file FROM syllabus WHERE id = $id");
+    if (!$res || $res->num_rows === 0) {
+        http_response_code(404);
+        echo json_encode(["status" => "error", "message" => "Record not found"]);
+        exit;
+    }
+    $row = $res->fetch_assoc();
+    $oldPdf = $row['pdf_file'];
+
+    // Cannot handle file uploads in PUT directly, so update pdf separately if needed
+    $stmt = $conn->prepare("UPDATE syllabus SET publication_date = ?, class = ?, title = ? WHERE id = ?");
+    $stmt->bind_param("sisi", $publication_date, $class, $title, $id);
+
+    if ($stmt->execute()) {
+        echo json_encode(["status" => "success", "message" => "Syllabus updated"]);
+    } else {
+        http_response_code(500);
+        echo json_encode(["status" => "error", "message" => $conn->error]);
+    }
+    $stmt->close();
+
 } elseif ($method === 'DELETE') {
     parse_str(file_get_contents("php://input"), $deleteData);
-    $id = $deleteData['id'] ?? 0;
+    $id = $deleteData['id'] ?? null;
 
-    if ($id) {
-        // Delete PDF file if exists
-        $res = $conn->query("SELECT pdf_file FROM syllabus WHERE id=$id");
-        if ($res->num_rows > 0) {
-            $row = $res->fetch_assoc();
-            if (!empty($row['pdf_file'])) {
-                $pdfPath = "uploads/syllabus/" . $row['pdf_file'];
-                if (file_exists($pdfPath)) unlink($pdfPath);
-            }
+    if (!$id) {
+        http_response_code(400);
+        echo json_encode(["status" => "error", "message" => "ID is required"]);
+        exit;
+    }
+
+    // Delete PDF file if exists
+    $res = $conn->query("SELECT pdf_file FROM syllabus WHERE id=$id");
+    if ($res && $res->num_rows > 0) {
+        $row = $res->fetch_assoc();
+        if (!empty($row['pdf_file'])) {
+            $pdfPath = "uploads/syllabus/" . $row['pdf_file'];
+            if (file_exists($pdfPath)) unlink($pdfPath);
         }
+    }
 
-        $conn->query("DELETE FROM syllabus WHERE id=$id");
+    $stmt = $conn->prepare("DELETE FROM syllabus WHERE id = ?");
+    $stmt->bind_param("i", $id);
+
+    if ($stmt->execute()) {
         echo json_encode(["status" => "success", "message" => "Syllabus deleted successfully"]);
     } else {
-        echo json_encode(["status" => "error", "message" => "ID is required"]);
+        http_response_code(500);
+        echo json_encode(["status" => "error", "message" => $conn->error]);
     }
+    $stmt->close();
+
+} else {
+    http_response_code(405);
+    echo json_encode(["status" => "error", "message" => "Method not allowed"]);
 }
 
 $conn->close();
-?>
