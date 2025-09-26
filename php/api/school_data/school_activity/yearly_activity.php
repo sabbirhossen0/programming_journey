@@ -18,7 +18,7 @@ if ($conn->connect_error) {
 $createTableSQL = "
 CREATE TABLE IF NOT EXISTS yearly_activity (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    image VARCHAR(255) NOT NULL,
+    image VARCHAR(255) ,
     title VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
     activity_date DATE NOT NULL,
