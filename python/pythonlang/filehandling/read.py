@@ -1,2 +1,2 @@
-f = open("pythona.txt", "r")
-print(f.read())
+with open("pythona.txt", "r") as f:
+	print(f.read())
